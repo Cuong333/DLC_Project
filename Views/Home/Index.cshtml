@@ -1,0 +1,60 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using DLC_Project.Models
+
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/LayoutDLC.cshtml";
+}
+
+@model List<Product>
+
+<div class="container-fluid pt-5 pb-3">
+    <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
+        <span class="bg-secondary pr-3">Featured Products</span>
+    </h2>
+    <div class="row px-xl-5">
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <div class="product-item bg-light mb-4">
+                    <!-- Display product image -->
+                    <div class="position-relative overflow-hidden">
+                        @if (!string.IsNullOrEmpty(item.Photo))
+                        {
+                            <img class="img-fluid w-100"
+                                 src="@Url.Content("~/productimages/img/" + item.Photo)?v=@DateTime.Now.Ticks"
+                                 alt="@item.ProductName"
+                                 style="height: 200px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <img class="img-fluid w-100"
+                                 src="@Url.Content("~/productimages/img/default.jpg")"
+                                 alt="No image available"
+                                 style="height: 200px; object-fit: cover;" />
+                        }
+                    </div>
+
+                    <div class="product-action">
+                        <a class="btn btn-outline-dark btn-square" ><i class="fa fa-shopping-cart"></i></a>
+                        <a class="btn btn-outline-dark btn-square" href="#"><i class="far fa-heart"></i></a>
+                        <a class="btn btn-outline-dark btn-square" href="#"><i class="fa fa-sync-alt"></i></a>
+                        <a class="btn btn-outline-dark btn-square"><i class="fa fa-search"></i></a>
+                    </div>
+
+                    <div class="text-center py-4">
+                        <!-- Display product name -->
+                        <a class="h6 text-decoration-none text-truncate" href="#">
+                            @(string.IsNullOrEmpty(item.ProductName) ? "No product name" : item.ProductName)
+                        </a>
+
+                        <!-- Display product price -->
+                        <div class="d-flex align-items-center justify-content-center mt-2">
+                            <h5>@String.Format("{0:C}", item.Price)</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
