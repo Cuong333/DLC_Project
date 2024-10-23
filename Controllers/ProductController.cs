@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace DLC_Project.Controllers
 {
@@ -10,9 +9,9 @@ namespace DLC_Project.Controllers
             return View();
         }
 
-        public IActionResult ProductDetail()
-        {
-            return View("~/Views/Product/ProductDetail.cshmt");
-        }
+        //public IActionResult ProductDetail()
+        //{
+        //    return View("~/Views/Product/ProductDetail.cshtml");
+        //}
     }
 }
