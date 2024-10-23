@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System;
-using DLC_Project.Models;
 
 namespace DemoDLC.Controllers
 {
