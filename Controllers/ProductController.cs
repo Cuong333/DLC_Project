@@ -9,9 +9,9 @@ namespace DLC_Project.Controllers
             return View();
         }
 
-        //public IActionResult ProductDetail()
-        //{
-        //    return View("~/Views/Product/ProductDetail.cshtml");
-        //}
+        public IActionResult ProductDetail()
+        {
+            return View("~/Views/Product/ProductDetail.cshtml");
+        }
     }
 }

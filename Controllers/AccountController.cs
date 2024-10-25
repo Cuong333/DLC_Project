@@ -8,7 +8,14 @@ namespace DemoDLC.Controllers
 {
     public class AccountController : Controller
     {
-        DemoDlcContext db = new DemoDlcContext();
+        // Instantiate database context
+        private readonly DemoDlcContext db;
+
+        // Constructor to inject context if required
+        public AccountController(DemoDlcContext context)
+        {
+            db = context;
+        }
 
         // Login GET
         [HttpGet]
@@ -34,30 +41,23 @@ namespace DemoDLC.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            // Find the customer in the database using the provided username and password
-            var cus = db.Customers.SingleOrDefault(x => x.Username == customer.Username && x.Password == customer.Password);
-
-            // Check if the customer exists
-            if (cus != null)
+            if (ModelState.IsValid)
             {
-                // Check if the Username is not null or empty
-                if (!string.IsNullOrEmpty(cus.Username))
+                // Find the customer in the database using the provided username and password
+                var cus = db.Customers.SingleOrDefault(x => x.Username == customer.Username && x.Password == customer.Password);
+
+                if (cus != null)
                 {
                     // Store the username in session
                     HttpContext.Session.SetString("Username", cus.Username);
                     return RedirectToAction("Index", "Home");
                 }
-                else
-                {
-                    // Handle the case where Username is null or empty
-                    ViewBag.ErrorMessage = "Username is invalid.";
-                    return View();
-                }
+
+                // If no matching customer is found, display an error message
+                ViewBag.ErrorMessage = "Invalid username or password.";
             }
 
-            // If no matching customer is found, display an error message
-            ViewBag.ErrorMessage = "Invalid username or password.";
-            return View();
+            return View(customer);
         }
 
         // Register GET
@@ -74,56 +74,36 @@ namespace DemoDLC.Controllers
             return View();
         }
 
-        // Check if the customer already exists
-        private bool CustomerExists(string userName)
-        {
-            return db.Customers.Any(e => e.Username == userName);
-        }
-
         // Register POST
         [HttpPost]
         public IActionResult Register(Customer customer)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // Check if the model is valid
-                if (ModelState.IsValid)
+                // Check if the username already exists
+                if (!CustomerExists(customer.Username))
                 {
-                    // Check if the username already exists
-                    if (!CustomerExists(customer.Username))
-                    {
-                        // If everything is valid, add the customer
-                        db.Customers.Add(customer);
-                        db.SaveChanges();
+                    // Add the customer to the database
+                    db.Customers.Add(customer);
+                    db.SaveChanges();
 
-                        // Check if the Username is not null or empty
-                        if (!string.IsNullOrEmpty(customer.Username))
-                        {
-                            // Store the username in session
-                            HttpContext.Session.SetString("Username", customer.Username);
-                            return RedirectToAction("Index", "Home");
-                        }
-                        else
-                        {
-                            // Handle the case where Username is null or empty
-                            ModelState.AddModelError("", "Username cannot be null.");
-                            return View(customer);
-                        }
-                    }
-                    else
-                    {
-                        // If the username already exists, show an error
-                        ModelState.AddModelError("", "Username already exists!");
-                    }
+                    // Store the username in session
+                    HttpContext.Session.SetString("Username", customer.Username);
+                    return RedirectToAction("Index", "Home");
                 }
-                return View(customer);
+
+                // If the username already exists, show an error
+                ModelState.AddModelError("", "Username already exists!");
             }
-            catch (Exception ex)
-            {
-                // Handle any other errors and show an appropriate message
-                ModelState.AddModelError("", "An error occurred while processing your request. Please try again later.");
-                return View(customer);
-            }
+
+            // If model is invalid or username exists, return the form with the error message
+            return View(customer);
+        }
+
+        // Helper method to check if a customer exists by username
+        private bool CustomerExists(string username)
+        {
+            return db.Customers.Any(c => c.Username == username);
         }
     }
 }
