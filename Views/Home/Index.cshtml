@@ -1,12 +1,13 @@
 ﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @using DLC_Project.Models
-
+@using X.PagedList.Mvc.Core;
 @{
     ViewData["Title"] = "Home Page";
     Layout = "~/Views/Shared/LayoutDLC.cshtml";
 }
 
-@model List<Product>
+@model X.PagedList.IPagedList<Product>
+
 
 <div class="container-fluid pt-5 pb-3">
     <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
@@ -58,3 +59,21 @@
         }
     </div>
 </div>
+<!-- Pagination Controls -->
+<div class="d-flex justify-content-center mt-4">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions
+{
+    DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+    DisplayLinkToLastPage = PagedListDisplayMode.Always,
+    DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+    DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded,
+    DisplayLinkToIndividualPages = true,
+    LinkToPreviousPageFormat = "←",
+    LinkToNextPageFormat = "→",
+    ContainerDivClasses = new[] { "pagination" },
+    UlElementClasses = new[] { "pagination" },
+    LiElementClasses = new[] { "page-item" },
+    PageClasses = new[] { "page-link" }
+})
+</div>
+

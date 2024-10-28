@@ -1,6 +1,9 @@
 using DLC_Project.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace DLC_Project.Controllers
 {
@@ -14,10 +17,17 @@ namespace DLC_Project.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? page)
         {
-            var listProduct = db.Products.ToList();
-            return View(listProduct);
+            int pageSize = 12; 
+            int pageNumber = page == null || page <= 0 ? 1 : page.Value; 
+            
+            var listProduct = db.Products.AsNoTracking().OrderBy(x => x.ProductName);
+
+            // Apply pagination using X.PagedList
+            IPagedList<Product> pagedList = listProduct.ToPagedList(pageNumber, pageSize);
+
+            return View(pagedList);
         }
 
         public IActionResult Privacy()
