@@ -1,109 +1,105 @@
-﻿using DLC_Project.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using DLC_Project.Models;
 using System.Linq;
-using System;
+using DLC_Project.Controllers;
 
-namespace DemoDLC.Controllers
+
+public class AccountController : Controller
 {
-    public class AccountController : Controller
+
+    DemoDlcContext db = new DemoDlcContext();
+    private readonly ILogger<AccountController> _logger;
+    public AccountController(ILogger<AccountController> logger)
     {
-        // Instantiate database context
-        private readonly DemoDlcContext db;
-
-        // Constructor to inject context if required
-        public AccountController(DemoDlcContext context)
+        _logger = logger;
+    }
+    // Login
+    [HttpGet]
+    public IActionResult Login()
+    {
+        if (!string.IsNullOrEmpty(HttpContext.Session.GetString("UserName")))
         {
-            db = context;
+            return RedirectToAction("Index", "Home");
         }
+        return View();
+    }
 
-        // Login GET
-        [HttpGet]
-        public IActionResult Login()
+    [HttpPost]
+    public IActionResult Login(Customer customer)
+    {
+        if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserName")))
         {
-            // If the user is already logged in, redirect to the home page
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
+            var u = db.Customers.FirstOrDefault(x => x.Username == customer.Username && x.Password == customer.Password);
+
+            if (u != null)
             {
+                HttpContext.Session.SetString("UserName", u.Username);
                 return RedirectToAction("Index", "Home");
             }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Invalid username or password");
+                return View();
+            }
+        }
+        else
+        {
+            return RedirectToAction("Index", "Home");
+        }
+    }
 
-            // If the user is not logged in, show the login page
+
+    // Register
+    private bool CustomerExists(string userName)
+    {
+        return db.Customers.Any(e => e.Username == userName);
+    }
+    [HttpGet]
+    public IActionResult Register()
+    {
+        if (HttpContext.Session.GetString("UserName") == null)
+        {
             return View();
         }
-
-        // Login POST
-        [HttpPost]
-        public IActionResult Login(Customer customer)
+        else
         {
-            // If the user is already logged in, redirect to the home page
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            if (ModelState.IsValid)
-            {
-                // Find the customer in the database using the provided username and password
-                var cus = db.Customers.SingleOrDefault(x => x.Username == customer.Username && x.Password == customer.Password);
-
-                if (cus != null)
-                {
-                    // Store the username in session
-                    HttpContext.Session.SetString("Username", cus.Username);
-                    return RedirectToAction("Index", "Home");
-                }
-
-                // If no matching customer is found, display an error message
-                ViewBag.ErrorMessage = "Invalid username or password.";
-            }
-
-            return View(customer);
+            return RedirectToAction("Index", "Home");
         }
-
-        // Register GET
-        [HttpGet]
-        public IActionResult Register()
-        {
-            // If the user is already logged in, redirect to the home page
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            // If the user is not logged in, show the registration page
-            return View();
-        }
-
-        // Register POST
-        [HttpPost]
-        public IActionResult Register(Customer customer)
+    }
+    [HttpPost]
+    public IActionResult Register(Customer customer)
+    {
+        try
         {
             if (ModelState.IsValid)
             {
-                // Check if the username already exists
                 if (!CustomerExists(customer.Username))
                 {
-                    // Add the customer to the database
                     db.Customers.Add(customer);
                     db.SaveChanges();
-
-                    // Store the username in session
-                    HttpContext.Session.SetString("Username", customer.Username);
+                    HttpContext.Session.SetString("UserName", customer.Username);
                     return RedirectToAction("Index", "Home");
                 }
-
-                // If the username already exists, show an error
-                ModelState.AddModelError("", "Username already exists!");
+                else
+                {
+                    ModelState.AddModelError("", "Username already exists!");
+                }
             }
-
-            // If model is invalid or username exists, return the form with the error message
             return View(customer);
         }
-
-        // Helper method to check if a customer exists by username
-        private bool CustomerExists(string username)
+        catch (Exception ex)
         {
-            return db.Customers.Any(c => c.Username == username);
+            ModelState.AddModelError("", "An error occurred while processing your request. Please try again later.");
+            return View(customer);
         }
+    }
+
+    // LogOut
+    [HttpGet]
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Remove("UserName");
+        return RedirectToAction("Index", "Home");
     }
 }
