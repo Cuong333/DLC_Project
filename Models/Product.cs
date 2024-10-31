@@ -5,6 +5,7 @@ namespace DLC_Project.Models;
 
 public partial class Product
 {
+
     public string ProductId { get; set; } = null!;
 
     public string CategoryId { get; set; } = null!;

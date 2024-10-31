@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace DLC_Project.Models;
@@ -9,6 +10,7 @@ public partial class DemoDlcContext : DbContext
     public DemoDlcContext()
     {
     }
+
 
     public DemoDlcContext(DbContextOptions<DemoDlcContext> options)
         : base(options)
@@ -112,7 +114,7 @@ public partial class DemoDlcContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("address");
             entity.Property(e => e.Birthday).HasColumnName("birthday");
-            entity.Property(e => e.Confirmpassword)
+            entity.Property(e => e.ConfirmPassword)         
                 .HasMaxLength(50)
                 .HasColumnName("confirmpassword");
             entity.Property(e => e.Email)
