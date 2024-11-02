@@ -11,6 +11,7 @@ public partial class DemoDlcContext : DbContext
     {
     }
 
+    // Define your DbSet properties here
 
     public DemoDlcContext(DbContextOptions<DemoDlcContext> options)
         : base(options)
