@@ -20,7 +20,7 @@ namespace DLC_Project.Controllers
 
         public IActionResult Index(int? page)
         {
-            int pageSize = 6;
+            int pageSize = 10;
             int pageNumber = page == null || page <= 0 ? 1 : page.Value;
 
             var listProduct = _db.Products.AsNoTracking().OrderBy(x => x.ProductName);
