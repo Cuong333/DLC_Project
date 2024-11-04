@@ -1,17 +1,18 @@
 using DLC_Project.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+// Register IHttpContextAccessor
+builder.Services.AddHttpContextAccessor(); // <-- Add this line
 
-// Register your DemoDlcContext as a service
 builder.Services.AddDbContext<DemoDlcContext>(options =>
-{
-    // Use the correct connection string or provider (e.g., SQL Server, SQLite, etc.)
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add controllers and views
+builder.Services.AddControllersWithViews();
 
 // Add session services
 builder.Services.AddSession(options =>
@@ -24,10 +25,9 @@ builder.Services.AddSession(options =>
 // Add distributed memory cache (required for session state)
 builder.Services.AddDistributedMemoryCache();
 
-// Build the app
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
