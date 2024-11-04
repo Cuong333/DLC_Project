@@ -1,7 +1,4 @@
-﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-﻿@using Microsoft.AspNetCore.Http
-@inject IHttpContextAccessor HttpContextAccessor
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -28,6 +25,7 @@
 </head>
 
 <body>
+    <!-- Topbar Start -->
     <div class="container-fluid">
         <div class="row bg-secondary py-1 px-xl-5">
             <div class="col-lg-6 d-none d-lg-block">
@@ -38,32 +36,15 @@
                     <a class="text-body mr-3" href="">FAQs</a>
                 </div>
             </div>
-
-            <div class="col-lg-6 d-flex align-items-center justify-content-end">
-                <div class="d-flex align-items-center">
-                    <div class="btn-group mr-3">
-                        @if (HttpContextAccessor.HttpContext.Session.GetString("UserName") != null)
-                        {
-                            <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">
-                                Xin chào, @HttpContextAccessor.HttpContext.Session.GetString("UserName")
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" asp-controller="Account" asp-action="Profile">Profile</a>
-                                <a class="dropdown-item" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
-                            </div>
-                        }
-                        else
-                        {
-                            <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">
-                                Account
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" asp-controller="Account" asp-action="Login">Đăng nhập</a>
-                                <a class="dropdown-item" asp-controller="Account" asp-action="Register">Đăng ký</a>
-                            </div>
-                        }
+            <div class="col-lg-6 text-center text-lg-right">
+                <div class="d-inline-flex align-items-center">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">My Account</button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <button class="dropdown-item" type="button">Sign in</button>
+                            <button class="dropdown-item" type="button">Sign up</button>
+                        </div>
                     </div>
-
                     <div class="btn-group mx-2">
                         <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">VN</button>
                         <div class="dropdown-menu dropdown-menu-right">
@@ -78,22 +59,19 @@
                             <button class="dropdown-item" type="button">VN</button>
                         </div>
                     </div>
-
-                    <div class="d-inline-flex align-items-center d-block d-lg-none">
-                        <a href="" class="btn px-0 ml-2">
-                            <i class="fas fa-heart text-dark"></i>
-                            <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">0</span>
-                        </a>
-                        <a href="" class="btn px-0 ml-2">
-                            <i class="fas fa-shopping-cart text-dark"></i>
-                            <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">0</span>
-                        </a>
-                    </div>
+                </div>
+                <div class="d-inline-flex align-items-center d-block d-lg-none">
+                    <a href="" class="btn px-0 ml-2">
+                        <i class="fas fa-heart text-dark"></i>
+                        <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">0</span>
+                    </a>
+                    <a href="" class="btn px-0 ml-2">
+                        <i class="fas fa-shopping-cart text-dark"></i>
+                        <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">0</span>
+                    </a>
                 </div>
             </div>
         </div>
-    </div>
-
         <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex">
             <div class="col-lg-4">
                 <a href="" class="text-decoration-none">
@@ -202,6 +180,9 @@
 
 
     <!-- Navbar End -->
+
+   
+ 
     <!-- Products Start -->
     <div class="container-fluid pt-5 pb-3">
         <!-- Phần Featured Products -->
